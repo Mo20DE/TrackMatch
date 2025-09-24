@@ -1,26 +1,33 @@
 package com.myproject;
 
 import com.fftplot.SpectrogramPlot;
+import com.hashmappair.HashMapPair;
 
 import javax.sound.sampled.*;
+
 import java.io.*;
+import java.util.HashMap;
+import java.util.List;
 
 import org.jtransforms.fft.DoubleFFT_1D;
 
 public class TrackMatch {
+
+    private static final int[] RANGE = new int[] {20, 40, 80, 120, 200, 400};
+    private static final int SAMPLING_RATE = 44100;
+    private static final int DOWNSAMPLE_FACTOR = 2; // 44100 HZ -> 22050 HZ
     
-    private static AudioFormat getFormat(float sampleRate) {
+    private static AudioFormat getFormat() {
         int sampleSize = 16; // Higher precision audio
         int channels = 1; // Mono
         boolean signed = true;
         boolean bigEndian = true;
-        return new AudioFormat(sampleRate, sampleSize, channels, signed, bigEndian);
+        return new AudioFormat(SAMPLING_RATE, sampleSize, channels, signed, bigEndian);
     }
 
     private static TargetDataLine getTargetDataLineInstance() {
         
-        float sampleRate = 44100;
-        final AudioFormat format = getFormat(sampleRate);
+        final AudioFormat format = getFormat();
         DataLine.Info info = new DataLine.Info(TargetDataLine.class, format);
         if (!AudioSystem.isLineSupported(info)) {
             return null;
@@ -43,21 +50,21 @@ public class TrackMatch {
 
         line.start();
         while (System.currentTimeMillis() < end) {
-                byte[] temp = new byte[1024];
-                int count = line.read(temp, 0, temp.length);
-                if (count > 0) {
-                    buffer.write(temp, 0, count);
-                }
+            byte[] temp = new byte[1024];
+            int count = line.read(temp, 0, temp.length);
+            if (count > 0) {
+                buffer.write(temp, 0, count);
             }
-            System.out.flush();
+        }
+        line.close();
+        System.out.flush();
 
         return buffer;
     }
 
-    private static double[][] applyFFT(ByteArrayOutputStream buffer) {
+    private static double[][] ApplyFFT(ByteArrayOutputStream buffer) {
 
-        // convert byte array to integer array
-        byte audio[] = buffer.toByteArray();
+        byte audio[] = buffer.toByteArray(); // convert byte array to integer array
         int totalSamples = audio.length / 2;
         int chunkSize = 1024; // 2000 samples are one frame 
         int sampledChunkSize = totalSamples / chunkSize;
@@ -65,11 +72,12 @@ public class TrackMatch {
         double[][] result = new double[sampledChunkSize][];
         
         for (int i = 0; i < sampledChunkSize; i++) {
-            // if last chunk is too small, just cut it off
+
+            // if last chunk is too small, use the remaining size
             int remaining = totalSamples - i * chunkSize;
             int currentChunkSize = Math.min(chunkSize, remaining);
-
             double[] samples = new double[currentChunkSize];
+
             for (int j = 0; j < currentChunkSize; j++) {
                 int index = i * chunkSize * 2 + j * 2;
                 int hi = audio[index + 1];
@@ -78,11 +86,10 @@ public class TrackMatch {
                 samples[j] = sample;
             }
             // downsample audio
-            int downsample_factor = 4; // 44100 -> 11025 
-            int new_length = samples.length / downsample_factor;
+            int new_length = samples.length / DOWNSAMPLE_FACTOR;
             double[] downsampled = new double[new_length];
             for (int k = 0; k < new_length; k++) {
-                downsampled[k] = samples[k * downsample_factor];
+                downsampled[k] = samples[k * DOWNSAMPLE_FACTOR];
             }
             // apply the hamming-window
             int N = downsampled.length;
@@ -100,28 +107,35 @@ public class TrackMatch {
 
     public static int getIndex(int freq) {
         int i = 0;
-        while (i < freq) i++;
-        return i;
+        while (i < RANGE.length && RANGE[i] < freq) i++;
+        return Math.min(i, RANGE.length - 1);
     }
 
     private static double[][] ExtractPeaks(double[][] spectrogram) {
 
-        int total_peaks = spectrogram.length;
-        final int[] Range = new int[] {20, 40, 80, 120, 180, 300};
-        double[][] points = new double[total_peaks][Range.length];
-        double[][] highscores = new double[total_peaks][Range.length];
+        int totalChunks = spectrogram.length;
+        double[][] constellation_map = new double[totalChunks][RANGE.length];
+        double[][] highscores = new double[totalChunks][RANGE.length];
 
-        for (int t = 0; t < total_peaks; t++) {
-            for (int freq = 20; freq < 300; freq++) {
+        for (int t = 0; t < totalChunks; t++) {
+
+            for (int freq = RANGE[0]; freq < RANGE[RANGE.length - 1]; freq++) {
+                
                 double mag = Math.log(Math.abs(spectrogram[t][freq]) + 1); // betrachte chunk, für jeden chunk nehmen wir innerhalb eines frequenz-intervalls (segment) die frequenz mit der höchsten magnitude
                 int index = getIndex(freq);
+
                 if (mag > highscores[t][index]) {
                     highscores[t][index] = mag;
-                    points[t][index] = freq;
+                    constellation_map[t][index] = freq;
                 }
             }
         }
-        return points;
+        return constellation_map;
+    }
+
+    private static HashMap<Long, List<HashMapPair>> generateHashMap(double[][] constellation_map) {
+        HashMap<Long, List<HashMapPair>> hashmap = new HashMap<>();
+        return hashmap;
     }
 
     private static void SaveAudio(ByteArrayOutputStream buffer, AudioFormat format) {
@@ -139,7 +153,8 @@ public class TrackMatch {
 
         TargetDataLine line = getTargetDataLineInstance();
         ByteArrayOutputStream output = RecordWithMic(line, 2500);
-        double[][] result = applyFFT(output);
+        double[][] result = ApplyFFT(output);
+        ExtractPeaks(result);
         System.out.println(result[0]);
         // SpectrogramPlot.show(result);
         // SaveAudio(output, getFormat());
