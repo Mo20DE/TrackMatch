@@ -1,0 +1,62 @@
+# ------------------------------------
+# 1. Dependency Directories
+# ------------------------------------
+# Node.js
+/node_modules
+.pnp
+.pnp.js
+
+# Java/Maven/Gradle
+/target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# ------------------------------------
+# 2. Build Artifacts
+# ------------------------------------
+# Java Artifacts
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+
+# Next.js build output
+.next/
+out/
+
+# Log files
+*.log
+log.txt
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+
+# ------------------------------------
+# 3. Environment/Configuration Files
+# ------------------------------------
+# Sensitive configuration files (API keys, passwords, database settings)
+.env
+.env.local
+.env.development.local
+.env.production.local
+application*.properties.local
+application*.yml.local
+
+# IDE-specific files (IntelliJ, VS Code, Eclipse)
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+.settings/
+.classpath
+.project
+
+# ------------------------------------
+# 4. OS Generated Files
+# ------------------------------------
+.DS_Store
+Thumbs.db

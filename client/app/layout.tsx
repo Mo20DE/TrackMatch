@@ -1,0 +1,30 @@
+import type { Metadata } from "next";
+import "./globals.css";
+
+import NavBar from "@/components/NavBar";
+import Footer from "@/components/Footer";
+
+export const metadata: Metadata = {
+  title: "TrackMatch",
+  description: "A music recognition system.",
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en">
+      <body
+        className="flex flex-col min-h-screen antialiased dark"
+      >
+        <NavBar />
+        <div className="flex-grow p-18 mb-20">
+          {children}
+        </div>
+        <Footer />
+      </body>
+    </html>
+  );
+}
