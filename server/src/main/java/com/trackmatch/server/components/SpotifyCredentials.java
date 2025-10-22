@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Getter
 @Component
-public class SpotifyConfig {
+public class SpotifyCredentials {
     @Value("${spotify.api.client}")
     private String clientID;
     @Value("${spotify.api.secret}")

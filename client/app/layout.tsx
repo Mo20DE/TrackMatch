@@ -20,7 +20,7 @@ export default function RootLayout({
         className="flex flex-col min-h-screen antialiased dark"
       >
         <NavBar />
-        <div className="flex-grow p-18 mb-20">
+        <div className="flex-grow p-14 mb-14">
           {children}
         </div>
         <Footer />

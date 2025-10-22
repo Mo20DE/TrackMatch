@@ -34,7 +34,7 @@ public class MainDownloadService {
         this.songRecordRepository = songRecordRepository;
         try {
             Files.createDirectories(DOWNLOAD_PATH);
-            System.out.println("Created directory: " + DOWNLOAD_PATH.toAbsolutePath());
+            // System.out.println("Created directory: " + DOWNLOAD_PATH.toAbsolutePath());
         }
         catch (IOException e) {
             notificationService.sendProcessStageNotification("error");

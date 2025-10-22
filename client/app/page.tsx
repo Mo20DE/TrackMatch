@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useState, useEffect } from "react";
 
@@ -9,6 +9,8 @@ import CustomAlert from "@/components/CustomAlert";
 import TotalSongs from "@/components/TotalSongs";
 import Carousel from "@/components/Carousel";
 import DownloadSpinner from "@/components/DownloadSpinner";
+import { Button } from "@/components/ui/button";
+
 
 import { AudioRecorderService } from "@/utils/AudioRecorderService";
 
@@ -33,6 +35,8 @@ export default function Home() {
   const [inputDisabled, setInputDisabled] = useState(false);
   const [destructive, setDestructive] = useState(false);
   const [matchYtIds, setMatchYtIds] = useState<string[]>([]);
+  const [showCarousel, setShowCarousel] = useState(false);
+
 
   useEffect(() => {
     if (showAlert) {
@@ -120,6 +124,12 @@ export default function Home() {
     sendUrl(); // send the spotify url to the backend
   }, [inputBody, canSend])
 
+  useEffect(() => {
+    if (matchYtIds.length > 0) {
+      setShowCarousel(true);
+    }
+  }, [matchYtIds])
+
 
   useEffect(() => {
 
@@ -164,7 +174,8 @@ export default function Home() {
           const result = msg.split(",").filter(Boolean);
           setMatchYtIds(prev => [...prev, ...result]);
         }
-      } catch (err) {
+      } 
+      catch (err) {
         console.error("Unexpected error during sending: ", err)
       }
       finally {
@@ -183,12 +194,18 @@ export default function Home() {
   return (
     <div className="flex flex-col relative justify-center items-center gap-24">
       <CustomAlert message={notif} show={showAlert} destructive={destructive}/>
-      <TotalSongs totalSongs={totalSongs}></TotalSongs>
+      <TotalSongs totalSongs={totalSongs}/>
       <p>Identify and discover songs in seconds.</p>
       <ListenButton isRecording={isRecording} setListenBtnClicked={setListenBtnClicked}/>
       <div className="flex flex-col items-center gap-14">
         <InputDeviceSelecter inputDeviceType={inputDeviceType} onSend={setInputDeviceType}/>
-        {matchYtIds.length > 0 && <Carousel matchYtIds={matchYtIds} />}
+        {matchYtIds.length > 0 && showCarousel && (
+          <div className="flex flex-col">
+            <p>{showCarousel}</p>
+            <Button variant="secondary" size="lg" className='ml-4 mb-2 w-fit' onClick={() => setShowCarousel(false)}>Close Matches</Button>
+            <Carousel matchYtIds={matchYtIds} />
+          </div>
+        )}
         <InputWithButton setInputBody={setInputBody} setCanSend={setCanSend} disabled={inputDisabled || processStage.length > 0}/>
         {processStage.length > 0 && <DownloadSpinner processStage={processStage}/>}
       </div>
