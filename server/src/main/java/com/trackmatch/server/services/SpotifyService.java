@@ -2,8 +2,8 @@ package com.trackmatch.server.services;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.trackmatch.server.components.SpotifyCredentials;
 import com.trackmatch.server.models.ServiceResult;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -17,12 +17,15 @@ import java.util.Base64;
 @Service
 public class SpotifyService {
 
-    private final SpotifyCredentials spotifyCredentials;
     private final HttpClient client = HttpClient.newHttpClient();
     private final NotificationService notificationService;
+    @Value("${spotify.client.id}")
+    private String SPOTIFY_CLIENT_ID;
+    @Value("${spotify.client.secret}")
+    private String SPOTIFY_CLIENT_SECRET;
 
-    public SpotifyService(SpotifyCredentials spotifyCredentials, NotificationService notificationService) {
-        this.spotifyCredentials = spotifyCredentials;
+
+    public SpotifyService(NotificationService notificationService) {
         this.notificationService = notificationService;
     }
 
@@ -31,7 +34,7 @@ public class SpotifyService {
             notificationService.sendProcessStageNotification("Fetching data...");
             // send request to spotify to get the access-token for web-api
             String token_url = "https://accounts.spotify.com/api/token";
-            String client_data = spotifyCredentials.getClientID() + ":" + spotifyCredentials.getClientSecret();
+            String client_data = SPOTIFY_CLIENT_ID + ":" + SPOTIFY_CLIENT_SECRET;
             String encoded_client_data = Base64.getEncoder().encodeToString((client_data.getBytes()));
 
             HttpRequest access_token_request = HttpRequest.newBuilder()

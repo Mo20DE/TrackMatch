@@ -7,7 +7,7 @@ interface ListenButtonProps {
 const ListenButton = ({isRecording, setListenBtnClicked}: ListenButtonProps) => {
     
     return (
-        <div className="relative w-34 h-34">
+        <div className="relative w-32 h-32">
             {isRecording && (
                 <>
                     <span className="absolute inset-0 rounded-full bg-blue-400 animate-ripple"></span>

@@ -16,7 +16,7 @@ import { AudioRecorderService } from "@/utils/AudioRecorderService";
 
 import { Client, IMessage } from "@stomp/stompjs";
 
-const recordingTime = 8000;
+const recordingTime = 10000;
 const BACKEND_URL = "http://localhost:8080"
 const audioRecorderService = new AudioRecorderService();
 
@@ -192,7 +192,7 @@ export default function Home() {
   }, [listenBtnClicked])
 
   return (
-    <div className="flex flex-col relative justify-center items-center gap-24">
+    <div className="flex flex-col relative justify-center items-center gap-22">
       <CustomAlert message={notif} show={showAlert} destructive={destructive}/>
       <TotalSongs totalSongs={totalSongs}/>
       <p>Identify and discover songs in seconds.</p>
@@ -202,7 +202,7 @@ export default function Home() {
         {matchYtIds.length > 0 && showCarousel && (
           <div className="flex flex-col">
             <p>{showCarousel}</p>
-            <Button variant="secondary" size="lg" className='ml-4 mb-2 w-fit' onClick={() => setShowCarousel(false)}>Close Matches</Button>
+            <Button variant="secondary" size="lg" className='ml-4 w-fit' onClick={() => setShowCarousel(false)}>Close</Button>
             <Carousel matchYtIds={matchYtIds} />
           </div>
         )}

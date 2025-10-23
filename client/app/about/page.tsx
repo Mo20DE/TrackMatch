@@ -19,7 +19,7 @@ const About = () => {
         <p>
             One is <code>POST /api/process-url</code>, which is responsible for 
             fetching song metadata via Spotify's Web-API based on a provided Spotify-URL, downloading 
-            the found songs from youtube, generating fingerprints (short digital audio signatures - unique 
+            the found songs from youtube via yt-dlp, generating fingerprints (short digital audio signatures - unique 
             patterns of certain frequencies at specific time points in a song to quickly identify and match 
             music) and finally saving the acquired data into a databse. <br/><br/>
             The other endpoint is <code>POST /api/process-audio</code>, which handles the processing of the 

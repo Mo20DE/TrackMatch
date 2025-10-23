@@ -6,7 +6,7 @@ import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "TrackMatch",
-  description: "A music recognition system.",
+  description: "A Music Recognition System.",
 };
 
 export default function RootLayout({

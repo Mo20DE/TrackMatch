@@ -1,77 +1,82 @@
 # TrackMatch - A Music Recognition System
 
-This repository showcases a full-stack application implementing a proprietary music recognition solution, leveraging audio fingerprinting techniques similar to the **Shazam algorithm**. The system features a modern microservice architecture and asynchronous processing capabilities.
+This project implements the **Shazam Algorithm** for music recognition. It is a full-stack application combining a powerful backend service for audio fingerprint processing and matching with a modern frontend.
 
-## 🌟 Core Features
+<p align="center">
+    <a href="https://drive.google.com/file/d/1wfJiKjMyx45iD1AhXBeAKbp2wM6MmKC9/view?usp=share_link" target="_blank">
+        <img src="./assets/preview.png" alt="App preview" width="500">
+    </a>
+</p>
+<p align="center"><a href="https://drive.google.com/file/d/1wfJiKjMyx45iD1AhXBeAKbp2wM6MmKC9/view?usp=share_link" target="_blank">Demo in video</a></p>
 
-| Feature Area | Description | Technologies |
+
+## ✨ Features
+
+* **Song Fingerprinting:** Creation of unique digital audio signatures (fingerprints) from music tracks for fast and efficient identification.
+* **Database-Driven Recognition:** Utilization of an efficient matching algorithm to match audio snippets against a database of known song fingerprints.
+* **Spotify Integration:** Fetching song metadata using the Spotify Web API.
+* **YouTube Integration:** Downloading songs from YouTube and storing the corresponding Video-IDs for playback.
+* **RESTful API:** Two clearly defined endpoints for data processing and the recognition workflow.
+
+
+## 🛠️ Technology Stack
+
+| Component | Technology | Description |
 | :--- | :--- | :--- |
-| **Architecture** | Clean separation of concerns between client and server. | Next.js, Spring Boot, PostgreSQL |
-| **Data Ingestion**| Batch processing for **Spotify (Song, Album, Playlist)** URLs. | Spotify API, YouTube (Audio Source) |
-| **Performance** | **Asynchronous and Parallel** execution of I/O-bound tasks (Download & Fingerprinting). | Spring Boot Executors, Async Programming |
-| **User Feedback**| **Real-time status reporting** for long-running ingestion processes. | WebSockets |
-| **Core Logic** | Extraction of unique **audio fingerprints** and high-speed database matching. | Proprietary Shazam-like Algorithm |
+| **Frontend** | **Next.js** (React) | Modern, performant user interface. |
+| **Styling** | **Tailwind CSS** | Utility-first CSS framework for rapid, responsive design. |
+| **Backend** | **Spring Boot** (Java) | Robust and scalable RESTful API server. |
+| **Database** | **PostgreSQL** | Reliable relational database for song and fingerprint data. |
+| **Tools** | **yt-dlp** | Used for downloading audio data from YouTube. |
 
----
+## 📐 System Architecture
 
-## ⚙️ System Architecture & Flow
+The system consists of a Next.js client application and a Spring Boot Backend server, which controls all data processing and the recognition mechanism.
 
-The backend service is structured around two highly distinct REST endpoints.
-
-### System Architecture Diagram
-
-Below is a high-level overview of the system's architecture and data flow:
+The image below illustrates the data flow and system components:
 
 ![System Architecture Diagram](assets/architecture.png)
 
-### 1. Data Ingestion: Song Registration (`/process-url`)
+The architecture is divided into two main processes, accessible via the REST interface:
 
-This endpoint is optimized for high-throughput data loading and persistence, offering live feedback.
 
-* **Input:** A **Spotify URL** (Song, Album, or Playlist).
-* **Process Detail:**
-    1.  The backend parses the Spotify URL to retrieve all track metadata.
-    2.  The corresponding audio source is identified via **YouTube**.
-    3.  **Asynchronous/Parallel Execution:** For each song, the system initiates parallel tasks to **download the audio stream** and simultaneously begin the **fingerprint generation** on available audio chunks.
-    4.  **Live Feedback (WebSocket):** Progress is relayed to the client via a **WebSocket connection**, providing transparent updates on the status of each song's fingerprinting and database commit.
-    5.  Data is persisted across two tables: Song Metadata and the high-volume Fingerprint Hash Table in **PostgreSQL**.
+## 💻 API Endpoints
 
-### 2. Query Service: Music Recognition (`/process-audio`)
+The Spring Boot Backend provides two central RESTful endpoints that map the complete song recognition lifecycle:
 
-This endpoint is optimized for ultra-low latency, real-time matching.
+### 1. Song Data Processing
 
-* **Input:** A short recorded audio snippet.
-* **Process Detail:**
-    1.  A fingerprint is generated from the query audio.
-    2.  The system performs a rapid, indexed lookup against the **Fingerprint DB** to identify potential matches.
-    3.  Match data is validated and correlated with the song metadata, providing the Title, Artist, and time offset.
+This endpoint is responsible for initializing the database with new songs.
 
----
+* **Endpoint:** `POST /api/process-url`
+* **Input:** A Spotify URL.
+* **Flow:**
+    1.  `Fetch Spotify Data`: Retrieves song metadata.
+    2.  `Download Songs from YouTube`: Downloads the audio file.
+    3.  `Generate Fingerprints`: Creates digital audio fingerprints.
+    4.  `Save Song Metadata + Youtube-ID`: Stores metadata in the **Song DB**.
+    5.  `Save Fingerprints`: Stores fingerprints in the **Fingerprint DB**.
 
-## 🛠️ Technical Stack
+### 2. Audio Recognition
 
-| Component | Technology | Role |
-| :--- | :--- | :--- |
-| **Client** | Next.js (React), **Tailwind CSS** | UI/UX, WebSocket Client. |
-| **Server API** | Spring Boot (Java) | REST Controller, Service Layer, Asynchronous Executors. |
-| **Database** | PostgreSQL | Robust, indexed storage for all metadata and fingerprints. |
-| **External Sources** | Spotify API, YouTube Extractor | Data retrieval and audio sourcing. |
+This endpoint handles the actual recognition process for a recorded audio snippet.
 
----
+* **Endpoint:** `POST /api/process-audio`
+* **Input:** A Base64-encoded audio snippet
+* **Flow:**
+    1.  `Generate Fingerprints`: Creates the fingerprint of the input snippet.
+    2.  `Shazam Algorithm (Compute similarity)`: Applies the matching algorithm against the **Fingerprint DB**.
+    3.  **Output:** Returns `Matching Results` (YouTube Video-IDs of 4 highest matches).
 
-## 🚀 Setup and Deployment
 
-### Prerequisites
+## 📚 Resources
 
-* Java JDK 17+
-* Node.js & npm/yarn
-* PostgreSQL Server
-* Credentials for **Spotify API** (Client ID/Secret)
-* Required audio extraction tool/library integrated into the Spring Boot environment.
+Key sources and references used for the implementation of the core features:
 
-### Local Startup
+* [How does Shazam work - Coding Geek](https://drive.google.com/file/d/1ahyCTXBAZiuni6RTzHzLoOwwfTRFaU-C/view)
+* [YouTube video explaining the core concepts](https://www.youtube.com/watch?v=a0CVCcb0RJM&t=307s)
 
-1.  **Database Configuration:** Initialize PostgreSQL and configure the connection details.
-2.  **Environment Variables:** Set API keys for Spotify and YouTube.
-3.  **Backend:** Build and start the Spring Boot application.
-4.  **Frontend:** Navigate to the client directory, install dependencies, and start the Next.js server (`npm run dev`).
+
+## 📄 License
+
+This project is licensed under the **MIT License**. See the accompanying [License](./LICENSE) file for more details.
