@@ -2,6 +2,7 @@
 
 This project implements the **Shazam Algorithm** for music recognition. It is a full-stack application combining a powerful backend service for audio fingerprint processing and matching with a modern frontend.
 
+<br>
 <p align="center">
     <a href="https://drive.google.com/file/d/1wfJiKjMyx45iD1AhXBeAKbp2wM6MmKC9/view?usp=share_link" target="_blank">
         <img src="./assets/preview.png" alt="App preview" width="500">
