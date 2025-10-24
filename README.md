@@ -16,19 +16,19 @@ This project implements the **Shazam Algorithm** for music recognition. It is a 
 * **Song Fingerprinting:** Creation of unique digital audio signatures (fingerprints) from music tracks for fast and efficient identification.
 * **Database-Driven Recognition:** Utilization of an efficient matching algorithm to match audio snippets against a database of known song fingerprints.
 * **Spotify Integration:** Fetching song metadata using the Spotify Web API.
-* **YouTube Integration:** Downloading songs from YouTube and storing the corresponding Video-IDs for playback.
+* **YouTube Integration:** Downloading songs from YouTube using yt-dlp and storing the corresponding Video-IDs for playback.
 * **RESTful API:** Two clearly defined endpoints for data processing and the recognition workflow.
+* **Live-Updates:** WebSocket enabling real-time updates of server activity.
 
 
 ## 🛠️ Technology Stack
 
 | Component | Technology | Description |
 | :--- | :--- | :--- |
-| **Frontend** | **Next.js** (React) | Modern, performant user interface. |
-| **Styling** | **Tailwind CSS** | Utility-first CSS framework for rapid, responsive design. |
+| **Frontend** | **Next.js** (React, Tailwind) | Modern, performant user interface. |
 | **Backend** | **Spring Boot** (Java) | Robust and scalable RESTful API server. |
 | **Database** | **PostgreSQL** | Reliable relational database for song and fingerprint data. |
-| **Tools** | **yt-dlp** | Used for downloading audio data from YouTube. |
+
 
 ## 📐 System Architecture
 
