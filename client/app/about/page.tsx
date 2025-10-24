@@ -22,10 +22,14 @@ const About = () => {
             the found songs from youtube via yt-dlp, generating fingerprints (short digital audio signatures - unique 
             patterns of certain frequencies at specific time points in a song to quickly identify and match 
             music) and finally saving the acquired data into a databse. <br/><br/>
+
             The other endpoint is <code>POST /api/process-audio</code>, which handles the processing of the 
             recorded audio snippet by generating it's corresponding fingerprint and applying an efficient matching
             algorithm that uses the fingerprints from the database to find the YouTube Video-Id's of the four highest 
-            matches. Finally these Video-ID's are used to display the videos on the client side. 
+            matches. Finally these Video-ID's are used to display the videos on the client side. <br/><br/>
+
+            Additionally, a WebSocket connection enables real-time updates of server activity during the 
+            downloading and fingerprinting process.
         </p>
     </div>
   )
