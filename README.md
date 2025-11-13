@@ -1,4 +1,4 @@
-# TrackMatch - A Music Recognition System
+# TrackMatch - A Music Recognition App
 
 This project implements the **Shazam Algorithm** for music recognition. It is a full-stack application combining a powerful backend service for audio fingerprint processing and matching with a modern frontend.
 
